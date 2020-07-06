@@ -21,8 +21,9 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
 
+        self.capacity = max(MIN_CAPACITY, capacity)
+        self.storage = [None]*self.capacity
 
     def get_num_slots(self):
         """
@@ -34,7 +35,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -51,9 +52,26 @@ class HashTable:
         FNV-1 Hash, 64-bit
 
         Implement this, and/or DJB2.
-        """
 
-        # Your code here
+https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+        Implements FNV hashing for strings.
+        
+        For example, for the kv pair 'Jud' - Cheeseburger'
+        the key 'Jud' gets hashed."""
+        
+        FNV_offset_basis = 14695981039346656037
+        FNV_prime = 1099511628211
+        
+        bytes_of_data = key.encode()
+        
+        # initial value of hash
+        my_hash = FNV_offset_basis
+        
+        for b in bytes_of_data:
+            my_hash = b * FNV_prime
+            my_hash = b ^ my_hash # XOR   
+            
+        return my_hash
 
 
     def djb2(self, key):
@@ -70,8 +88,8 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
-        return self.djb2(key) % self.capacity
+        return self.fnv1(key) % self.capacity
+        # return self.djb2(key) % self.capacity
 
     def put(self, key, value):
         """
@@ -81,7 +99,10 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        self.storage[self.hash_index(key)] = value
+
+        return True
+
 
 
     def delete(self, key):
@@ -92,7 +113,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        self.storage[self.hash_index(key)] = None
+
+        return True
 
 
     def get(self, key):
@@ -103,7 +126,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.storage[self.hash_index(key)]
 
 
     def resize(self, new_capacity):
@@ -151,3 +174,7 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     print("")
+
+
+hoo  = HashTable(0x10000)
+print (hoo.capacity)
