@@ -7,6 +7,10 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
+        
+class LinkedList:
+    def __init__(self):
+        self.head = None
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -86,21 +90,27 @@ https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
-        between within the storage capacity of the hash table.
+        within the capacity of the hash table.
         """
         return self.fnv1(key) % self.capacity
         # return self.djb2(key) % self.capacity
 
     def put(self, key, value):
         """
-        Store the value with the given key.
+        Store value with the given key.
 
         Hash collisions should be handled with Linked List Chaining.
-
-        Implement this.
         """
-        self.storage[self.hash_index(key)] = value
+#         self.storage[self.hash_index(key)] = value
+        new_node = HashTableEntry(key, value)
+        hash_index = self.hash_index(key)
 
+        if self.storage[hash_index] is None:
+            self.storage[hash_index] = LinkedList()
+            self.storage[hash_index].head = new_node
+        else:
+            new_node.next = self.storage[hash_index].head
+            self.storage[hash_index].head = new_node
         return True
 
 
@@ -110,12 +120,29 @@ https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
-
-        Implement this.
         """
-        self.storage[self.hash_index(key)] = None
-
-        return True
+        hash_index = self.hash_index(key)
+        
+        if self.storage[hash_index] is None:
+            print('A warning')
+            return True
+        # else
+        cur = self.storage[hash_index].head
+        if cur.key == key:
+            self.storage.head = cur.next
+            return True
+            
+#         else:
+        while cur.next is not None:
+            curnext = cur.next
+            if curnext.key == key:
+                cur.next = curnext.next
+                return True
+        #else
+        print('A warning')
+#         self.storage[self.hash_index(key)] = None
+# 
+#         return True
 
 
     def get(self, key):
@@ -123,21 +150,48 @@ https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
         Retrieve the value stored with the given key.
 
         Returns None if the key is not found.
-
-        Implement this.
         """
-        return self.storage[self.hash_index(key)]
+        hash_index = self.hash_index(key)
+        
+        if self.storage[hash_index] is None:
+            return None
+        # else
+        cur = self.storage[hash_index].head
+        if cur.key == key:
+            return cur.value
+        # else
+        while cur.next is not None:
+            cur = cur.next
+            if cur.key == key:
+                return cur.value
+        #else
+        return None
+    
+#     
+#         return self.storage[self.hash_index(key)]
 
 
     def resize(self, new_capacity):
         """
         Changes the capacity of the hash table and
         rehashes all key/value pairs.
-
-        Implement this.
         """
-        # Your code here
-
+        self.capacity = new_capacity
+        old_storage = self.storage
+        self.storage = [None]*new_capacity
+        
+        # for every index in the hash table
+        for slot in old_storage:
+            
+            # if there is anything here
+            if slot is not None:
+                cur = slot.head
+                self.put(cur.key, cur.value)
+                
+                # for every item in an LL after the head
+                while cur.next is not None:
+                    cur = cur.next
+                    self.put(cur.key, cur.value)
 
 
 if __name__ == "__main__":
@@ -174,7 +228,3 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     print("")
-
-
-hoo  = HashTable(0x10000)
-print (hoo.capacity)
