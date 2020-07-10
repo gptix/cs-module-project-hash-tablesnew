@@ -1,6 +1,6 @@
 def word_count(s):
 
-    characters_to_remove = {'\'', '"', ':', ';', ',', '.', '-', '+', "'"
+    characters_to_remove = {'"', ':', ';', ',', '.', '-', '+', 
         '=', '/', '\\', '|', '[', ']', '{', '}', '(', ')', '*', '^', '&'}
 
     nochar = ''
@@ -11,14 +11,15 @@ def word_count(s):
     words = s.split()
     words_lower = [w.lower() for w in words]
 
-    retval = {}
+    return_value = {}
 
+    # this is a tally
     for w in words_lower:
-        if w not in retval:
-            retval[w] = 0 # if an entry does not exist, create one
-        retval[w] += 1
+        if w not in return_value:
+            return_value[w] = 0 # if an entry does not exist, create one
+        return_value[w] += 1
     
-    return retval
+    return return_valueb
 
 
 
